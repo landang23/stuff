@@ -1,0 +1,11 @@
+Analysis: Netflix
+
+
+Goal:
+1. Download CSV data from Kaggle, then answer some sample questions using different languages/tools (pandas, R, SQL)
+2. Key Questions:
+  a. How many movies and tv shows were released each year? Is there a trend in the releases?
+  b. For tv shows, how many shows released since 2015 have more than 3 seasons
+  c. What was the average number of sesons for each show between 2010 & 2020.
+  d. What is the most common rating for comedies?
+  e. Is there a general trend of movie length over time?
