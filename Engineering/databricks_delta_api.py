@@ -29,18 +29,6 @@ def list_tables():
       cursor.tables(catalog_name=catalog, schema_name=schema)
       result = cursor.fetchall()
 
-      # response = { "data":[]}
-      # for row in result:
-
-      #   data= {
-      #     "table_name": row.TABLE_NAME,
-      #     "table_type": row.TABLE_TYPE,
-      #     "parent_schema": row.TABLE_SCHEM,
-      #     "parent_catalog": row.TABLE_CAT   
-      #   }
-
-      #   response["data"].append(data)
-        
     cursor.close()
     return jsonify(result)
 
