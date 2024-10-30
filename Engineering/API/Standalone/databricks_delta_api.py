@@ -4,7 +4,7 @@ from databricks import sql
 
 app = Flask(__name__)
 
-# Load credentials
+# Load credentials (not in repo)
 with open('creds.json', 'r') as file:
     credentials = json.loads(file.read())
 
@@ -90,4 +90,4 @@ def get_data():
       return result
 
 if __name__ == '__main__':
-   app.run(port=5000)
+   app.run(debug=True)
