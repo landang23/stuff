@@ -1,19 +1,22 @@
-import json
+# Imports
 from flask import Flask, jsonify, request
 from databricks import sql
+from dotenv import load_dotenv
+import os
 
 app = Flask(__name__)
 
-# Load credentials (not in repo)
-with open('creds.json', 'r') as file:
-    credentials = json.loads(file.read())
+# Config setup
+load_dotenv()
 
-connection =  sql.connect(server_hostname = credentials['HOSTNAME'],
-                 http_path       = credentials['HTTP_PATH'],
-                 access_token    = credentials['TOKEN'])
+connection =  sql.connect(
+                server_hostname = os.getenv("SERVER_HOSTNAME"),
+                http_path       = os.getenv("HTTP_PATH"),
+                access_token    = os.getenv("API_KEY")
+                )
 
 
-# List tables
+# List tables #
 @app.route('/list-tables', methods=['GET'])
 def list_tables():
   """List tables within a specified catalog and schema"""
@@ -33,7 +36,7 @@ def list_tables():
     return jsonify(result)
 
 
-# List columns in table
+# List columns in table #
 @app.route('/list-columns', methods=['GET'])
 def list_columns():
   """List columns within a specified catalog, schema, and table"""
@@ -69,7 +72,7 @@ def list_columns():
     return jsonify(response)
 
 
-# Get data in table
+# Get data in table #
 @app.route('/get-data', methods=['GET'])
 def get_data():
   """Gets a specified number of rows from a selected table. If no limit is specified, it defaults to 5"""
@@ -80,14 +83,32 @@ def get_data():
   limit = request.args.get('limit') or 5
 
   if not catalog or not schema or not table:
-    return 'Please specify a catalog, schema, and table. Ie. ?catalog=samples&schema=nyctaxi&table=trips'
-  
+    return 'Please specify a catalog, schema, and table. Ie. ?catalog=samples&schema=nyctaxi&table=trips&limit=5'
+  elif int(limit) > 100:
+    return 'Please specify a limit less than 100 rows and try again.'
   else:
     with connection.cursor() as cursor:
       cursor.execute(f"SELECT * FROM {catalog}.{schema}.{table} LIMIT {limit}")
       result = cursor.fetchall()
 
       return result
+    
+# API Homepage
+@app.route('/', methods=['GET'])
+def home():
 
+    text = """
+    <h3>API Endpoint Overview:</h3>
+    <ul>
+        <li>/list-tables - List tables inside of a catalog and schema. Ex: ?catalog=samples&schema=nyctaxi</li>
+        <li>/list-columns - List columns within a specified catalog, schema, and table. Ex: ?catalog=samples&schema=nyctaxi&table=trips</li>
+        <li>/get-data - Gets a specified number of rows from a selected table. If no limit is specified, it defaults to 5. Ex: ?catalog=samples&schema=nyctaxi&table=trips&limit=5</li>
+    </ul>
+    """
+
+    return text
+
+
+# Start App
 if __name__ == '__main__':
-   app.run(debug=True)
+   app.run(port=8080, debug=True)
