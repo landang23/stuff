@@ -4,3 +4,11 @@ command: [
   "app.py",
   "run"
 ]
+
+env:
+  - name: "ACCESS_TOKEN"
+    valueFrom: "access_token"
+  - name: "HTTP_PATH"
+    valueFrom: "http_path"
+  - name: "SERVER_HOSTNAME"
+    valueFrom: "server_hostname"
