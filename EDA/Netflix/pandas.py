@@ -41,21 +41,27 @@ df = df[~df['rating'].isna()]
 
 # COMMAND ----------
 
+# Display an updated count of records, now that there are no records with a null value in the rating column
 df['show_id'].count()
 
 # COMMAND ----------
 
 # Check first year for each type
-print(df['release_year'][df['type'] == 'TV Show'].min())
-print(df['release_year'][df['type'] == 'Movie'].min())
+print("First Year - TV Show:", df['release_year'][df['type'] == 'TV Show'].min())
+print("First Year - Movie:", df['release_year'][df['type'] == 'Movie'].min())
+
+# Check last year for each type
+print("Last Year - TV Show:", df['release_year'][df['type'] == 'TV Show'].max())
+print("First Year - Movie:", df['release_year'][df['type'] == 'Movie'].max())
+
 
 
 # COMMAND ----------
 
-# Remove rows where the release date is older than 1966
-df = df[df['release_year'] > 1966]
+# Remove rows where the release date is older than 1966 and newer than 2021
+df = df[(df['release_year'] >= 1990) & (df['release_year'] < 2021)]
 
-df['release_year'].min()
+df['release_year'].min(),df['release_year'].max()
 
 # COMMAND ----------
 
@@ -70,6 +76,7 @@ df['release_year'].min()
 # MAGIC   <li>How many movies and tv shows were released each year? Is there a trend in the releases?</li>
 # MAGIC   <li>For tv shows, how many shows released since 2015 have more than 3 seasons</li>
 # MAGIC   <li>Is there a general trend or relationship of movie length over time</li>
+# MAGIC   <li>Is there a general trend or relationship of TV Show season count over time</li>
 # MAGIC   <li>What categories are Reality TV movies and shows most often associated with</li>
 # MAGIC   <li>Which rating is most commonly associated with Crime movies</li>
 # MAGIC </ol>
@@ -82,7 +89,6 @@ df['release_year'].min()
 # COMMAND ----------
 
 yearly_releases = pd.DataFrame(df.groupby(['release_year', 'type'])['show_id'].count()).reset_index()
-#yearly_releases.set_index('release_year', inplace=True)
 yearly_releases = yearly_releases.pivot(index='release_year', columns='type', values='show_id')
 
 # COMMAND ----------
@@ -95,7 +101,7 @@ yearly_releases.plot()
 
 # COMMAND ----------
 
-new_releases = yearly_releases[(yearly_releases.index > 2010) & (yearly_releases.index < 2021)]
+new_releases = yearly_releases[yearly_releases.index > 2010]
 
 # COMMAND ----------
 
@@ -114,7 +120,15 @@ new_tv_shows_df['season_number'] = pd.to_numeric(new_tv_shows_df['season_number'
 
 # COMMAND ----------
 
-len(new_tv_shows_df[new_tv_shows_df['season_number'] > 3])
+# Show the number of TV shows since 2015 that has more than 3 seasons
+season_3_count = len(new_tv_shows_df[new_tv_shows_df['season_number'] > 3])
+print(f"Number of TV Shows since 2015 with more than three seasons: {season_3_count}")
+
+# COMMAND ----------
+
+# Show the top 10 longest running TV shows by season count
+long_running_tv_shows_df = new_tv_shows_df[new_tv_shows_df['season_number'] > 3]
+long_running_tv_shows_df[['title', 'season_number']].sort_values(by='season_number', ascending=False).head(10)
 
 # COMMAND ----------
 
@@ -127,13 +141,43 @@ df.head(3)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC #### 4. What categories are Reality TV movies and shows most often associated with
+df[['duration_mins', '_']] = df['duration'].str.split(" ", expand=True)
+
+# COMMAND ----------
+
+duration_df = df[(~df['duration_mins'].isna()) & (df['type'] == "Movie")]
+duration_df['duration_mins'] = duration_df['duration_mins'].astype(int)
+
+# COMMAND ----------
+
+duration_df[duration_df['duration_mins'] < 50]
+
+# COMMAND ----------
+
+duration_df.dtypes
+
+# COMMAND ----------
+
+duration_df.plot(x="release_year", y="duration_mins", kind="scatter")
+
+# COMMAND ----------
+
+duration_df.groupby("release_year").mean().plot()
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #### 5. Which rating is most commonly associated with Crime movies
+# MAGIC #### 4. Is there a general trend or relationship of TV Show season count over time 
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### 5. What categories are Reality TV movies and shows most often associated with
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### 6. Which rating is most commonly associated with Crime movies
 
 # COMMAND ----------
 
