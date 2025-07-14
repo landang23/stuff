@@ -1,0 +1,13 @@
+# Customer Segmentation Demo #
+
+Resources:
+* 00_README       -- This file
+* 01_Setup        -- setup for assets (creating volume & subdirectories) and generating data for demo
+* 02_Process_Data -- LDP/DLT pipeline to process raw data created in 02
+* 03_ML           -- Basic ML model for classifier model
+* 04_Dashboard    -- Dashboard & Genie Space for end users to use
+
+## 01_Init ##
+Assets to create:
+* Volume
+* subdirectories

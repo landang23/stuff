@@ -1,0 +1,406 @@
+{
+  "datasets": [
+    {
+      "name": "ca6ff424",
+      "displayName": "customer_segment_annotated",
+      "queryLines": [
+        "SELECT * FROM users.landan_george.customer_segment_annotated"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "be4c2d0f",
+      "displayName": "Untitled page",
+      "layout": [
+        {
+          "widget": {
+            "name": "781e2b13",
+            "multilineTextboxSpec": {
+              "lines": [
+                "# Customer Segmentation"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "c95ccde6",
+            "queries": [
+              {
+                "name": "dashboards/01f0578599ae15b58a8930953e0fd4a7/datasets/01f05785fbe819668b4758f7bb30e230_Segment",
+                "query": {
+                  "datasetName": "ca6ff424",
+                  "fields": [
+                    {
+                      "name": "Segment",
+                      "expression": "`Segment`"
+                    },
+                    {
+                      "name": "Segment_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Segment",
+                    "displayName": "Segment",
+                    "queryName": "dashboards/01f0578599ae15b58a8930953e0fd4a7/datasets/01f05785fbe819668b4758f7bb30e230_Segment"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 2,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "b619b26f",
+            "queries": [
+              {
+                "name": "dashboards/01f0578599ae15b58a8930953e0fd4a7/datasets/01f05785fbe819668b4758f7bb30e230_CustomerID",
+                "query": {
+                  "datasetName": "ca6ff424",
+                  "fields": [
+                    {
+                      "name": "CustomerID",
+                      "expression": "`CustomerID`"
+                    },
+                    {
+                      "name": "CustomerID_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "CustomerID",
+                    "displayName": "CustomerID",
+                    "queryName": "dashboards/01f0578599ae15b58a8930953e0fd4a7/datasets/01f05785fbe819668b4758f7bb30e230_CustomerID"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 2,
+            "width": 2,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "ed6f474a",
+            "queries": [
+              {
+                "name": "dashboards/01f0578599ae15b58a8930953e0fd4a7/datasets/01f05785fbe819668b4758f7bb30e230_LastPurchase",
+                "query": {
+                  "datasetName": "ca6ff424",
+                  "fields": [
+                    {
+                      "name": "LastPurchase",
+                      "expression": "`LastPurchase`"
+                    },
+                    {
+                      "name": "LastPurchase_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-date-range-picker",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "LastPurchase",
+                    "displayName": "LastPurchase",
+                    "queryName": "dashboards/01f0578599ae15b58a8930953e0fd4a7/datasets/01f05785fbe819668b4758f7bb30e230_LastPurchase"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 2,
+            "width": 2,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "ad10ff8f",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ca6ff424",
+                  "fields": [
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    },
+                    {
+                      "name": "Segment",
+                      "expression": "`Segment`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "count(*)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Count of Records"
+                },
+                "color": {
+                  "fieldName": "Segment",
+                  "scale": {
+                    "type": "categorical",
+                    "mappings": [
+                      {
+                        "value": "Loyalists",
+                        "color": {
+                          "themeColorType": "visualizationColors",
+                          "position": 3
+                        }
+                      },
+                      {
+                        "value": "Bargain Seekers",
+                        "color": {
+                          "themeColorType": "selectionColor"
+                        }
+                      },
+                      {
+                        "value": "Churn Risk",
+                        "color": {
+                          "themeColorType": "visualizationColors",
+                          "position": 4
+                        }
+                      },
+                      {
+                        "value": "High Value",
+                        "color": {
+                          "themeColorType": "visualizationColors",
+                          "position": 2
+                        }
+                      }
+                    ]
+                  },
+                  "displayName": "Segment"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 3,
+            "height": 10
+          }
+        },
+        {
+          "widget": {
+            "name": "0f957793",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ca6ff424",
+                  "fields": [
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    },
+                    {
+                      "name": "Segment",
+                      "expression": "`Segment`"
+                    },
+                    {
+                      "name": "Gender",
+                      "expression": "`Gender`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "heatmap",
+              "encodings": {
+                "x": {
+                  "fieldName": "Segment",
+                  "scale": {
+                    "type": "categorical"
+                  },
+                  "displayName": "Segment"
+                },
+                "y": {
+                  "fieldName": "Gender",
+                  "scale": {
+                    "type": "categorical"
+                  },
+                  "displayName": "Gender"
+                },
+                "color": {
+                  "fieldName": "count(*)",
+                  "scale": {
+                    "type": "quantitative",
+                    "colorRamp": {
+                      "mode": "scheme",
+                      "scheme": "plasma"
+                    }
+                  },
+                  "displayName": "Count of Records"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 3,
+            "width": 3,
+            "height": 10
+          }
+        },
+        {
+          "widget": {
+            "name": "ac0cc60c",
+            "multilineTextboxSpec": {
+              "lines": [
+                ""
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 13,
+            "width": 6,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "1f49ecc1",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ca6ff424",
+                  "fields": [
+                    {
+                      "name": "Segment",
+                      "expression": "`Segment`"
+                    },
+                    {
+                      "name": "median(AvgOrderValue)",
+                      "expression": "MEDIAN(`AvgOrderValue`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Segment",
+                  "scale": {
+                    "type": "categorical"
+                  },
+                  "displayName": "Segment"
+                },
+                "y": {
+                  "fieldName": "median(AvgOrderValue)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Median of AvgOrderValue"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 15,
+            "width": 2,
+            "height": 10
+          }
+        },
+        {
+          "widget": {
+            "name": "57f9b753",
+            "multilineTextboxSpec": {
+              "lines": [
+                "## General\n",
+                "Autogrouped using K-means clustering"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 6,
+            "height": 2
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    }
+  }
+}
