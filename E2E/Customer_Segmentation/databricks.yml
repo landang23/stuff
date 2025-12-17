@@ -1,0 +1,127 @@
+bundle:
+  name: customer-segmentation
+
+sync:
+  exclude:
+    - 'src/*.lvdash.json'
+
+variables:
+  catalog_name:
+    description: Unity Catalog to use for this solution accelerator
+    default: dev_customer_segmentation
+  schema_name:
+    description: Schema to use for this solution accelerator  
+    default: segmentation
+  warehouse_id:
+    description: ID for the SQL Warehouse connected to the dashboard
+    default: 4b9b953939869799 # Change here or in variable overrides
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      root_path: ~/.databricks/bundles/customer-segmentation
+
+  prod:
+    mode: production
+    workspace:
+      root_path: /Shared/customer-segmentation
+    variables:
+      catalog_name: prod_customer_segmentation
+
+resources:
+  jobs:
+    data_setup_job:
+      name: "Data Setup - ${bundle.target}"
+      tasks:
+        - task_key: generate_synthetic_data
+          notebook_task:
+            notebook_path: ./notebooks/01_Data_Setup.py
+            base_parameters:
+              catalog_name: ${var.catalog_name}
+              schema_name: ${workspace.current_user.short_name}_${var.schema_name}
+
+    insights_job:
+      name: "Business Insights - ${bundle.target}"
+      tasks:
+        - task_key: create_business_insights
+          notebook_task:
+            notebook_path: ./notebooks/03_Business_Insights.py
+            base_parameters:
+              catalog_name: ${var.catalog_name}
+              schema_name: ${workspace.current_user.short_name}_${var.schema_name}
+
+    segmentation_mlflow_job:
+      name: "Unsupervised Customer Segmentation - ${bundle.target}"
+      tasks:
+        - task_key: unsupervised_customer_segmentation
+          notebook_task:
+            notebook_path: ./notebooks/02b_Segmentation_MLflow.py
+            base_parameters:
+              catalog_name: ${var.catalog_name}
+              schema_name: ${workspace.current_user.short_name}_${var.schema_name}
+
+    customer_lifetime_job:
+      name: "Customer Lifetime Value - ${bundle.target}"
+      tasks:
+        - task_key: run_customer_lifetime_value
+          notebook_task:
+            notebook_path: ./notebooks/04_Customer_Lifetime_Value.py
+            base_parameters:
+              catalog_name: ${var.catalog_name}
+              schema_name: ${workspace.current_user.short_name}_${var.schema_name}              
+
+    customer_segmentation_demo_install:
+      name: "Customer Segmentation Complete - ${bundle.target}"
+      tasks:
+        - task_key: setup_data
+          run_job_task:
+            job_id: ${resources.jobs.data_setup_job.id}
+        
+        - task_key: run_segmentation_pipeline
+          depends_on:
+            - task_key: setup_data
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.segmentation_pipeline.id}
+            full_refresh: true
+          
+        - task_key: unsupervised_segmentation
+          depends_on:
+            - task_key: run_segmentation_pipeline
+          run_job_task:
+            job_id: ${resources.jobs.segmentation_mlflow_job.id}          
+        
+        - task_key: generate_insights
+          depends_on:
+            - task_key: run_segmentation_pipeline
+          run_job_task:
+            job_id: ${resources.jobs.insights_job.id}
+
+        - task_key: run_customer_lifetime_value
+          depends_on:
+            - task_key: run_segmentation_pipeline
+          run_job_task:
+            job_id: ${resources.jobs.customer_lifetime_job.id}            
+
+  pipelines:
+    segmentation_pipeline:
+      name: "Segmentation Pipeline - ${bundle.target}"
+      edition: advanced
+      continuous: false
+      serverless: true
+      catalog: ${var.catalog_name}
+      target: ${workspace.current_user.short_name}_${var.schema_name}
+      libraries:
+        - notebook:
+            path: ./notebooks/02a_Segmentation_Lakeflow.py
+      configuration:
+        "pipelines.trigger.interval": "manual"
+        "catalog": "${var.catalog_name}"
+        "schema": "${workspace.current_user.short_name}_${var.schema_name}"
+
+  dashboards:
+      customer_segmentation_dashboard:
+        display_name: 'Customer Segmentation Dashboard'
+        file_path: 'src/customer_segmentation.lvdash.json'
+        warehouse_id: ${var.warehouse_id}
