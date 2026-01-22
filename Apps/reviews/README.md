@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS main.default.reviews (
 streamlit run app.py
 ```
 
-2. Configure your table settings in the sidebar:
+2. Configure your table settings in app.py:
    - Catalog (default: `users`)
    - Schema (default: `landan_george`)
    - Table name (default: `reviews`)
